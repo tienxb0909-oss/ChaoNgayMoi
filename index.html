@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gửi Công Chúa Nhỏ - Thiệp Chúc Ngày Mới ☀️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #ffd1dc 0%, #ffe3d8 40%, #ffecd2 100%);
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-border: rgba(255, 255, 255, 0.95);
+      --primary-color: #ff6b8b;
+      --secondary-color: #ffa07a;
+      --text-dark: #4a3b42;
+      --text-muted: #8b747d;
+      --shadow-soft: 0 20px 45px rgba(255, 107, 139, 0.16), 0 8px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+      padding: 20px 15px;
+      color: var(--text-dark);
+    }
+
+    #ambientCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Thanh điều khiển nhạc */
+    .audio-dock {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 50px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .music-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 10px rgba(255, 107, 139, 0.35);
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .music-btn:hover {
+      transform: scale(1.08);
+      background: #ff5277;
+    }
+
+    .wave-bar {
+      display: inline-flex;
+      align-items: flex-end;
+      height: 16px;
+      gap: 3px;
+    }
+
+    .bar {
+      width: 3px;
+      background: var(--primary-color);
+      border-radius: 2px;
+      height: 4px;
+    }
+
+    .playing .bar:nth-child(1) { animation: soundBar 0.8s ease-in-out infinite alternate; }
+    .playing .bar:nth-child(2) { animation: soundBar 0.5s ease-in-out infinite alternate 0.2s; }
+    .playing .bar:nth-child(3) { animation: soundBar 0.9s ease-in-out infinite alternate 0.4s; }
+
+    @keyframes soundBar {
+      0% { height: 4px; }
+      100% { height: 16px; }
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 540px;
+      perspective: 1200px;
+    }
+
+    /* Màn hình phong bì thư */
+    .envelope-wrapper {
+      background: white;
+      border-radius: 24px;
+      padding: 42px 30px;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      position: relative;
+    }
+
+    .envelope-wrapper:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px rgba(255, 107, 139, 0.22);
+    }
+
+    .envelope-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: #fff0f3;
+      color: var(--primary-color);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .envelope-heart {
+      font-size: 3.8rem;
+      margin: 12px 0;
+      display: inline-block;
+      animation: heartBeat 1.6s ease-in-out infinite;
+    }
+
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    .envelope-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.4rem;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    .envelope-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .open-letter-btn {
+      background: linear-gradient(45deg, #ff6b8b, #ffa07a);
+      color: white;
+      border: none;
+      padding: 14px 34px;
+      border-radius: 50px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(255, 107, 139, 0.35);
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .open-letter-btn:hover {
+      transform: scale(1.04);
+    }
+
+    /* Màn hình thiệp chúc chính */
+    .card-container {
+      display: none;
+      opacity: 0;
+      transform: translateY(20px) scale(0.96);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 28px;
+      border: 2px solid var(--card-border);
+      padding: 34px 26px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    .card-container.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 18px;
+      border-bottom: 1.5px dashed rgba(255, 107, 139, 0.25);
+      padding-bottom: 16px;
+    }
+
+    .sun-icon {
+      font-size: 2.3rem;
+      display: inline-block;
+      animation: rotateSun 18s linear infinite;
+    }
+
+    @keyframes rotateSun {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .today-date {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--secondary-color);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    .recipient-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-top: 2px;
+      text-shadow: 0 2px 8px rgba(255, 107, 139, 0.15);
+    }
+
+    /* Hộp câu chúc */
+    .quote-box {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 246, 248, 0.92));
+      border-radius: 20px;
+      padding: 22px 18px;
+      margin: 14px 0 20px 0;
+      position: relative;
+      border: 1px solid rgba(255, 107, 139, 0.2);
+      box-shadow: 0 8px 24px rgba(255, 107, 139, 0.08);
+      min-height: 125px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .quote-mark {
+      position: absolute;
+      font-family: 'Dancing Script', cursive;
+      font-size: 3.8rem;
+      color: rgba(255, 107, 139, 0.18);
+      user-select: none;
+    }
+    .quote-mark.left { top: -8px; left: 14px; }
+    .quote-mark.right { bottom: -28px; right: 14px; }
+
+    .quote-text {
+      font-size: 1.15rem;
+      line-height: 1.65;
+      font-weight: 600;
+      color: var(--text-dark);
+      position: relative;
+      z-index: 2;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    /* Quẻ may mắn cà phê */
+    .coffee-fortune {
+      background: #fff8f2;
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border: 1px dashed #f6b93b;
+      margin-bottom: 20px;
+      transition: transform 0.2s ease, background 0.2s;
+    }
+
+    .coffee-fortune:hover {
+      transform: translateY(-2px);
+      background: #fff3e6;
+    }
+
+    .coffee-cup {
+      font-size: 1.8rem;
+      animation: steamFloat 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes steamFloat {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(-3px) scale(1.05); }
+    }
+
+    .fortune-content {
+      font-size: 0.88rem;
+      color: #795548;
+      line-height: 1.45;
+    }
+
+    .fortune-content strong {
+      display: block;
+      color: #d35400;
+      font-size: 0.92rem;
+      margin-bottom: 2px;
+    }
+
+    /* Ký tên */
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 107, 139, 0.15);
+      margin-bottom: 18px;
+    }
+
+    .badge-today {
+      background: #ffe3e9;
+      color: var(--primary-color);
+      padding: 5px 12px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .sender-box {
+      text-align: right;
+    }
+
+    .sender-box span {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .sender-name {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #3b7a57;
+      margin-top: -2px;
+    }
+
+    /* Nút bấm chức năng */
+    .button-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 11px 16px;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .btn-random {
+      background: linear-gradient(45deg, #ff6b8b, #ff8e53);
+      color: white;
+      box-shadow: 0 4px 14px rgba(255, 107, 139, 0.3);
+    }
+    .btn-random:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-music {
+      background: #f1f2f6;
+      color: #57606f;
+    }
+    .btn-music:hover {
+      background: #e4e7eb;
+    }
+
+    .btn-copy {
+      background: #e8f5e9;
+      color: #2e7d32;
+      grid-column: span 2;
+    }
+    .btn-copy:hover {
+      background: #d4edda;
+    }
+
+    /* Thông báo nổi */
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%) translateY(70px);
+      background: rgba(45, 52, 54, 0.95);
+      color: white;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      z-index: 999;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 480px) {
+      .recipient-title { font-size: 2.2rem; }
+      .quote-text { font-size: 1.05rem; }
+      .button-actions { grid-template-columns: 1fr; }
+      .btn-copy { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="ambientCanvas"></canvas>
+
+  <div class="audio-dock">
+    <button class="music-btn" id="audioToggleBtn" title="Bật/Tắt giai điệu">🎵</button>
+    <span id="musicLabel">Bật nhạc</span>
+    <div class="wave-bar" id="waveVisualizer">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- MÀN HÌNH BÌ THƯ -->
+    <div class="envelope-wrapper" id="envelopeScreen" onclick="openCard()">
+      <div class="envelope-badge">💌 Bức thư sáng sớm đặc biệt</div>
+      <div class="envelope-heart">💖</div>
+      <h1 class="envelope-title">Gửi Công Chúa Nhỏ</h1>
+      <p class="envelope-subtitle">
+        Một ngày mới tinh khôi lại bắt đầu rồi.<br>
+        Có một điều ngọt ngào đang chờ em mở ra đấy! ✨
+      </p>
+      <button class="open-letter-btn">
+        <span>Chạm để mở thiệp</span> 🌸
+      </button>
+    </div>
+
+    <!-- MÀN HÌNH THIỆP CHÍNH -->
+    <div class="card-container" id="greetingCard">
+      <div class="card-header">
+        <div class="sun-icon">☀️</div>
+        <div class="today-date" id="dateDisplay">Ngày Mới An Lành</div>
+        <h2 class="recipient-title">Công Chúa Nhỏ 💕</h2>
+      </div>
+
+      <div class="quote-box">
+        <span class="quote-mark left">“</span>
+        <p class="quote-text" id="quoteText">Đang chuẩn bị điều ngọt ngào cho em...</p>
+        <span class="quote-mark right">”</span>
+      </div>
+
+      <!-- Tách cà phê may mắn -->
+      <div class="coffee-fortune" onclick="drawFortune()" title="Chạm để rút thêm quẻ may mắn">
+        <div class="coffee-cup">☕</div>
+        <div class="fortune-content">
+          <strong id="fortuneTitle">Quẻ May Mắn Ngày Mới 🍀</strong>
+          <span id="fortuneText">Đang bốc quẻ cho Công Chúa Nhỏ...</span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <span class="badge-today" id="badgeTag">✨ Năng Lượng Rạng Rỡ</span>
+        <div class="sender-box">
+          <span>Thương gửi từ:</span>
+          <div class="sender-name">Anh Bé Thư Giản 🌿</div>
+        </div>
+      </div>
+
+      <div class="button-actions">
+        <button class="btn btn-random" onclick="changeRandomQuote()">
+          <span>🎲 Đổi lời chúc khác</span>
+        </button>
+        <button class="btn btn-music" onclick="changeMelodyTheme()">
+          <span id="melodyThemeName">🎶 Đổi điệu nhạc</span>
+        </button>
+        <button class="btn btn-copy" onclick="copyQuote()">
+          <span>📋 Sao chép lời chúc này</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Đã sao chép lời chúc! 💕</div>
+
+  <script>
+    /* =================================================================
+       1. DANH SÁCH 31 CÂU CHÚC NGÀY MỚI (TƯƠNG ỨNG TỪ NGÀY 1 ĐẾN 31)
+       ================================================================= */
+    const wishes = [
+      { text: "Chào ngày mới mùng 1 tràn ngập khởi đầu may mắn! Chúc Công Chúa Nhỏ luôn mỉm cười thật rạng rỡ và đón nhận trọn vẹn những điều kỳ diệu! 🌸✨", tag: "✨ Khởi Đầu May Mắn (Ngày 1)" },
+      { text: "Sáng sớm thức giấc, nhớ uống một cốc nước ấm rồi hẵng bắt đầu ngày mới nha. Chúc Công Chúa Nhỏ hôm nay luôn bình an và vui vẻ! 💧💖", tag: "🍰 Dịu Dàng Yêu Thương (Ngày 2)" },
+      { text: "Nụ cười của Công Chúa Nhỏ còn ấm áp hơn cả tia nắng sớm mai. Chúc em một ngày làm việc thật thảnh thơi, không chút muộn phiền! 🌤️😊", tag: "☀️ Rạng Rỡ Ban Mai (Ngày 3)" },
+      { text: "Một ngày mới mang theo 24 giờ ngập tràn cơ hội ngọt ngào. Cứ tự tin, xinh xắn và tỏa sáng theo cách của riêng em nhé! 🌟🎀", tag: "🚀 Tự Tin Tỏa Sáng (Ngày 4)" },
+      { text: "Chúc Công Chúa Nhỏ một buổi sáng tinh khôi, hít một hơi thật sâu để nạp đầy năng lượng tích cực cho cả ngày dài! 🍃🧘‍♀️", tag: "🌿 Tươi Mát Trong Lành (Ngày 5)" },
+      { text: "Dù bên ngoài có bận rộn đến đâu, hãy luôn nhớ chăm sóc bản thân thật tốt và ăn những món mình thích nhé cô gái nhỏ! 🥞🍓", tag: "🧁 Ngọt Ngào & Chu Đáo (Ngày 6)" },
+      { text: "Tia nắng sớm ghé qua khung cửa để nhắn rằng: Có một người luôn mong Công Chúa Nhỏ mỗi ngày đều an yên và hạnh phúc! 🧸💌", tag: "💌 Ấm Áp Sáng Sớm (Ngày 7)" },
+      { text: "Hôm nay chắc chắn là một ngày siêu may mắn! Chúc mọi kế hoạch và dự định của Công Chúa Nhỏ đều diễn ra êm đẹp, thuận lợi! 🍀🎯", tag: "🍀 Vạn Sự Thuận Buồm (Ngày 8)" },
+      { text: "Chúc em có một ly cà phê sớm thơm ngát, một tâm hồn thư thái và một ngày ngập tràn những điều bất ngờ dễ thương! ☕🌼", tag: "☕ Thảnh Thơi Bình Yên (Ngày 9)" },
+      { text: "Em là bông hoa đẹp nhất trong buổi sớm hôm nay. Hãy cứ rực rỡ, yêu đời và luôn tin vào chính mình nhé Công Chúa Nhỏ! 🌺🌻", tag: "🌸 Đóa Hoa Rực Rỡ (Ngày 10)" },
+      { text: "Chúc Công Chúa Nhỏ hôm nay gặp toàn những con người tốt bụng, những câu chuyện vui vẻ và những nụ cười ấm lòng! 🌈🥰", tag: "💛 Vui Tươi Rộn Rã (Ngày 11)" },
+      { text: "Một ngày mới lại mở ra như trang sách mới toanh. Chúc em viết lên đó những khoảnh khắc thật đẹp và đáng nhớ nhé! 📖✨", tag: "📝 Khoảnh Khắc Đẹp (Ngày 12)" },
+      { text: "Gửi đến Công Chúa Nhỏ một cái ôm ấm áp buổi sáng. Đừng để những lo lắng nhỏ làm mờ đi nụ cười đáng yêu của em nhé! 🧸💞", tag: "🫂 Ôm Ấm Áp (Ngày 13)" },
+      { text: "Chúc Công Chúa Nhỏ có một ngày làm việc nhẹ tênh, deadline tự bay biến và mọi việc đều hoàn thành xuất sắc! 💻🕊️", tag: "✨ Làm Việc Nhẹ Nhàng (Ngày 14)" },
+      { text: "Nửa tháng trôi qua thật nhanh, chúc Công Chúa Nhỏ luôn giữ được trái tim tràn đầy nhiệt huyết và nét đáng yêu vốn có! 🎈💖", tag: "🍓 Tràn Đầy Năng Lượng (Ngày 15)" },
+      { text: "Gió sớm mang theo lời thì thầm: Hôm nay hãy mỉm cười thật nhiều nhé, vì nụ cười của em có phép màu xua tan mọi mệt nhọc! 🍃✨", tag: "🌬️ Gió Sớm Thì Thầm (Ngày 16)" },
+      { text: "Chúc Công Chúa Nhỏ một buổi sáng ngọt ngào như kẹo bông gòn và nhẹ nhàng như làn mây trắng trôi lững lờ trên bầu trời! ☁️🍭", tag: "🍭 Ngọt Ngào Êm Đềm (Ngày 17)" },
+      { text: "Đừng vội vã, cứ từng bước thong thả tận hưởng buổi sáng. Chúc Công Chúa Nhỏ có một ngày thảnh thơi trọn vẹn từng phút giây! 🚶‍♀️🌿", tag: "🧘 Thong Thả An Nhiên (Ngày 18)" },
+      { text: "Chúc cho đôi mắt của Công Chúa Nhỏ hôm nay chỉ nhìn thấy những điều đẹp đẽ, và đôi tai chỉ nghe những lời yêu thương dịu dàng! 👁️👂💕", tag: "🌷 Dịu Dàng Sâu Lắng (Ngày 19)" },
+      { text: "Ngày mới lại tới rồi! Chúc em luôn dồi dào sức khỏe, đôi chân vững vàng và trái tim luôn rộn rã tiếng hát yêu đời! 🏃‍♀️🎵", tag: "💪 Sức Khỏe & Bình An (Ngày 20)" },
+      { text: "Chúc Công Chúa Nhỏ một ngày có thật nhiều cảm hứng sáng tạo mới, giải quyết mọi điều khó khăn một cách dễ dàng và thông minh! 💡🎨", tag: "💡 Cảm Hứng Tuôn Trào (Ngày 21)" },
+      { text: "Mỗi sớm mai thức dậy là một món quà vô giá. Chúc Công Chúa Nhỏ bóc món quà hôm nay với sự háo hức và niềm vui trọn vẹn! 🎁🥳", tag: "🎁 Món Quà Cuộc Sống (Ngày 22)" },
+      { text: "Chúc Công Chúa Nhỏ hôm nay gặp may từ ngõ nhỏ ra phố lớn, bước chân đến đâu niềm vui và may mắn lan tỏa đến đó! 🍀👣", tag: "🌟 May Mắn Ngập Tràn (Ngày 23)" },
+      { text: "Nếu hôm nay có chút mệt mỏi, hãy nhớ dừng lại hít thở sâu và mỉm cười một cái nhé. Có anh bé luôn ủng hộ em phía sau! 🛡️🌿", tag: "🌿 Điểm Tựa Vững Vàng (Ngày 24)" },
+      { text: "Chúc Công Chúa Nhỏ một ngày ngập tràn sắc màu rực rỡ, tâm trạng luôn 'full pin' và không gì có thể làm em chùn bước! 🔋🌈", tag: "⚡ Pin Năng Lượng 100% (Ngày 25)" },
+      { text: "Chúc buổi sáng của em thơm phức mùi bánh mì mới nướng và đậm đà vị ngọt ngào của những điều hạnh phúc nhỏ nhoi! 🥐☕", tag: "🥐 Bình Dị Hạnh Phúc (Ngày 26)" },
+      { text: "Những ngày cuối tháng nhẹ nhàng trôi qua, chúc Công Chúa Nhỏ gặt hái thêm thật nhiều thành quả ngọt ngào và tự hào về bản thân! 🌾🏅", tag: "🏅 Tự Hào Về Em (Ngày 27)" },
+      { text: "Chúc Công Chúa Nhỏ có một tâm hồn tự do như cánh chim trời, an yên giữa nhịp sống hối hả ngoài kia! 🕊️🌤️", tag: "🕊️ Tự Do & An Lạc (Ngày 28)" },
+      { text: "Sáng sớm trong trẻo gửi ngàn lời chúc bình an đến Công Chúa Nhỏ. Cứ thảnh thơi mà sống, rồi hạnh phúc sẽ tự tìm tới em thôi! 🍃💫", tag: "💫 Bình Thản Hạnh Phúc (Ngày 29)" },
+      { text: "Chúc Công Chúa Nhỏ khép lại tháng này với thật nhiều nụ cười mãn nguyện và đón chờ những điều tuyệt vời ở chặng đường tới! 🎊🌟", tag: "🎊 Vui Tươi Trọn Vẹn (Ngày 30)" },
+      { text: "Ngày cuối cùng của tháng, gửi ngàn cái ôm siết chặt và lời chúc an yên nhất tới Công Chúa Nhỏ. Em luôn là điều tuyệt vời nhất! 💖👑", tag: "👑 Tuyệt Vời Nhất (Ngày 31)" }
+    ];
+
+    /* =================================================================
+       2. DANH SÁCH 31 QUẺ MAY MẮN CÀ PHÊ (TƯƠNG ỨNG TỪ NGÀY 1 ĐẾN 31)
+       ================================================================= */
+    const fortunes = [
+      "Quẻ ngày 1: Khởi sắc đầu tháng, tài lộc hanh thông, công việc suôn sẻ như ý! 💰",
+      "Quẻ ngày 2: Gặp được người dễ thương, nhận được một cử chỉ quan tâm làm ấm lòng cả ngày! 🧸",
+      "Quẻ ngày 3: Chỉ số may mắn 99%, làm gì cũng trúng ý, đi đâu cũng có người giúp! 🍀",
+      "Quẻ ngày 4: Thần ẩm thực ghé thăm, hôm nay sẽ được thưởng thức món ăn ngon tuyệt hảo! 🍰",
+      "Quẻ ngày 5: Tinh thần minh mẫn bất ngờ, việc nan giải đến mấy cũng nghĩ ra cách xử lý nhanh gọn! 💡",
+      "Quẻ ngày 6: Nhận được tin nhắn ngọt ngào hoặc một lời chúc khiến em mỉm cười tủm tỉm! 💌",
+      "Quẻ ngày 7: Sức khỏe dồi dào, bước chân nhẹ tênh, tràn ngập cảm hứng làm việc! 🏃‍♀️",
+      "Quẻ ngày 8: Ví tiền rủng rỉnh, có cơ hội săn được món đồ mình thích với giá siêu hời! 🛍️",
+      "Quẻ ngày 9: Tình cờ nghe được một bản nhạc siêu hay làm bừng sáng tâm trạng buổi sáng! 🎵",
+      "Quẻ ngày 10: Nhận được lời khen ngợi chân thành từ đồng nghiệp hoặc bạn bè xung quanh! 👏",
+      "Quẻ ngày 11: Năng lượng bình an bao bọc, tránh xa mọi thị phi và rắc rối không đáng có! 🛡️",
+      "Quẻ ngày 12: Đạt được một cột mốc nhỏ hoặc hoàn thành sớm công việc để về nhà nghỉ ngơi! ⏰",
+      "Quẻ ngày 13: May mắn bất ngờ gõ cửa, có thể là trúng một món quà nhỏ hoặc vé may mắn! 🎁",
+      "Quẻ ngày 14: Tâm hồn thư thái như đang đi dạo giữa rừng thông Đà Lạt mát rượi! 🌲",
+      "Quẻ ngày 15: Giữa tháng rực rỡ, mọi nỗ lực suốt những ngày qua bắt đầu đơm hoa kết trái! 🌸",
+      "Quẻ ngày 16: Một cuộc hẹn hò cà phê ấm áp hoặc buổi trò chuyện thú vị đang chờ em! ☕",
+      "Quẻ ngày 17: Áp lực tan biến, những vướng bận trong lòng hôm nay tự động được cởi bỏ! 🍃",
+      "Quẻ ngày 18: Thần may mắn đồng hành trên mọi nẻo đường, giao thông thuận lợi không kẹt xe! 🛵",
+      "Quẻ ngày 19: Nụ cười hôm nay có sức hút cực lớn, thu hút toàn những cơ duyên tốt đẹp! ✨",
+      "Quẻ ngày 20: Tinh thần lạc quan chạm đỉnh, khó khăn nào nhìn vào cũng thấy hướng đi tươi sáng! 🌈",
+      "Quẻ ngày 21: Một ý tưởng sáng tạo tuyệt vời lóe lên trong đầu, mang lại kết quả bất ngờ! 🎨",
+      "Quẻ ngày 22: Có người thầm ngưỡng mộ sự chăm chỉ và vẻ đáng yêu của em hôm nay đấy! 🤫💖",
+      "Quẻ ngày 23: Thời tiết trong lành, chiều nay ngắm hoàng hôn sẽ cực kỳ chill và lãng mạn! 🌇",
+      "Quẻ ngày 24: Nhận được sự thấu hiểu và sẻ chia chân thành từ người quan trọng! 🫂",
+      "Quẻ ngày 25: Năng suất làm việc gấp đôi ngày thường nhưng lại cảm thấy vô cùng thoải mái! 🚀",
+      "Quẻ ngày 26: Tìm lại được một món đồ tưởng chừng đã thất lạc bấy lâu nay! 🔍",
+      "Quẻ ngày 27: Được nuông chiều bản thân bằng một giấc ngủ trưa thật ngon và êm ái! 😴",
+      "Quẻ ngày 28: Một tin tức tốt lành liên quan đến công việc hoặc gia đình sắp báo về! 📬",
+      "Quẻ ngày 29: Trực giác hôm nay siêu nhạy bén, đưa ra quyết định nào cũng chuẩn xác! 🔮",
+      "Quẻ ngày 30: Thu hoạch được nhiều niềm vui và cảm giác tự hào khi nhìn lại những gì đã qua! 🌾",
+      "Quẻ ngày 31: Vận son trọn vẹn, sẵn sàng bước sang trang mới với vô vàn phúc lành! 🎊👑"
+    ];
+
+    let currentWishIndex = 0;
+    let currentFortuneIndex = 0;
+
+    /* =================================================================
+       3. TỰ ĐỘNG CHỌN THEO NGÀY TRONG THÁNG (1 -> 31)
+       ================================================================= */
+    function initDailyContent() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('dateDisplay').textContent = now.toLocaleDateString('vi-VN', options);
+
+      // Lấy ngày trong tháng (1 đến 31) để tương ứng chính xác vị trí trong mảng
+      const dayOfMonth = now.getDate(); // 1 - 31
+      currentWishIndex = (dayOfMonth - 1) % wishes.length;
+      currentFortuneIndex = (dayOfMonth - 1) % fortunes.length;
+
+      renderWish(currentWishIndex);
+      renderFortune(currentFortuneIndex);
+    }
+
+    function renderWish(index) {
+      const quoteEl = document.getElementById('quoteText');
+      const badgeEl = document.getElementById('badgeTag');
+
+      quoteEl.style.opacity = '0';
+      quoteEl.style.transform = 'translateY(8px)';
+
+      setTimeout(() => {
+        quoteEl.textContent = wishes[index].text;
+        badgeEl.textContent = wishes[index].tag;
+        quoteEl.style.opacity = '1';
+        quoteEl.style.transform = 'translateY(0)';
+      }, 200);
+    }
+
+    function renderFortune(index) {
+      const fortuneTextEl = document.getElementById('fortuneText');
+      fortuneTextEl.style.opacity = '0';
+      setTimeout(() => {
+        fortuneTextEl.textContent = fortunes[index];
+        fortuneTextEl.style.opacity = '1';
+      }, 150);
+    }
+
+    function changeRandomQuote() {
+      let nextIndex;
+      do {
+        nextIndex = Math.floor(Math.random() * wishes.length);
+      } while (nextIndex === currentWishIndex);
+      currentWishIndex = nextIndex;
+      renderWish(currentWishIndex);
+      showToast("Đã đổi sang câu chúc ngẫu nhiên mới! ✨");
+    }
+
+    function drawFortune() {
+      let nextFortune;
+      do {
+        nextFortune = Math.floor(Math.random() * fortunes.length);
+      } while (nextFortune === currentFortuneIndex);
+      currentFortuneIndex = nextFortune;
+      renderFortune(currentFortuneIndex);
+      showToast("Đã rút quẻ may mắn mới cho em! 🍀");
+    }
+
+    /* =================================================================
+       4. HỆ THỐNG ÂM THANH PROCEDURAL (WEB AUDIO API)
+       ================================================================= */
+    let audioCtx = null;
+    let isPlaying = false;
+    let melodyTimer = null;
+    let melodyMode = 0;
+
+    const melodyThemes = [
+      { name: "🎶 Điệu: Kalimba Sáng", scale: [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25], tempo: 420 },
+      { name: "🎐 Điệu: Chuông Gió", scale: [329.63, 392.00, 440.00, 523.25, 659.25, 783.99], tempo: 580 },
+      { name: "✨ Điệu: Hộp Nhạc", scale: [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 1046.50], tempo: 360 }
+    ];
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playNote(freq, type = 'sine', duration = 1.2) {
+      if (!audioCtx || !isPlaying) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    function stepMelody() {
+      if (!isPlaying) return;
+      const theme = melodyThemes[melodyMode];
+      const note = theme.scale[Math.floor(Math.random() * theme.scale.length)];
+
+      playNote(note, melodyMode === 1 ? 'sine' : 'triangle', melodyMode === 1 ? 2.0 : 1.2);
+      if (Math.random() > 0.65) {
+        setTimeout(() => {
+          const harmonyNote = theme.scale[Math.floor(Math.random() * theme.scale.length)];
+          playNote(harmonyNote, 'sine', 1.4);
+        }, 130);
+      }
+
+      const jitter = (Math.random() - 0.5) * 160;
+      melodyTimer = setTimeout(stepMelody, Math.max(250, theme.tempo + jitter));
+    }
+
+    function toggleAudio() {
+      initAudioContext();
+      isPlaying = !isPlaying;
+      updateAudioUI();
+
+      if (isPlaying) {
+        stepMelody();
+      } else {
+        clearTimeout(melodyTimer);
+      }
+    }
+
+    function changeMelodyTheme() {
+      melodyMode = (melodyMode + 1) % melodyThemes.length;
+      document.getElementById('melodyThemeName').textContent = melodyThemes[melodyMode].name;
+      showToast("Đã đổi sang: " + melodyThemes[melodyMode].name);
+      if (!isPlaying) {
+        toggleAudio();
+      }
+    }
+
+    function updateAudioUI() {
+      const btn = document.getElementById('audioToggleBtn');
+      const label = document.getElementById('musicLabel');
+      const visualizer = document.getElementById('waveVisualizer');
+
+      if (isPlaying) {
+        btn.textContent = '⏸️';
+        label.textContent = 'Giai điệu bật';
+        visualizer.classList.add('playing');
+      } else {
+        btn.textContent = '🎵';
+        label.textContent = 'Bật nhạc';
+        visualizer.classList.remove('playing');
+      }
+    }
+
+    document.getElementById('audioToggleBtn').addEventListener('click', toggleAudio);
+
+    /* =================================================================
+       5. MỞ THIỆP & TƯƠNG TÁC
+       ================================================================= */
+    function openCard() {
+      initAudioContext();
+      if (!isPlaying) {
+        toggleAudio();
+      }
+
+      const envelope = document.getElementById('envelopeScreen');
+      const card = document.getElementById('greetingCard');
+
+      envelope.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+      envelope.style.transform = 'scale(0.9) translateY(-20px)';
+      envelope.style.opacity = '0';
+
+      setTimeout(() => {
+        envelope.style.display = 'none';
+        card.classList.add('active');
+        spawnFloatingHearts();
+      }, 350);
+    }
+
+    function copyQuote() {
+      const quote = document.getElementById('quoteText').textContent;
+      const fortune = document.getElementById('fortuneText').textContent;
+      const textToCopy = `Gửi Công Chúa Nhỏ 💕:\n"${quote.trim()}"\n\n🍀 ${fortune.trim()}\n\n— Thương gửi từ: Anh Bé Thư Giản 🌿`;
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast("Đã sao chép lời chúc gửi Công Chúa Nhỏ! 💕");
+      }).catch(() => {
+        showToast("Đã sao chép nội dung!");
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2400);
+    }
+
+    /* =================================================================
+       6. CANVAS VẼ BỤI VÀNG & CÁNH HOA BAY
+       ================================================================= */
+    const canvas = document.getElementById('ambientCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height - 20;
+        this.size = Math.random() * 4 + 2;
+        this.speedX = (Math.random() - 0.5) * 0.8;
+        this.speedY = Math.random() * 0.9 + 0.4;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.isPetal = Math.random() > 0.4;
+        this.angle = Math.random() * Math.PI * 2;
+        this.spin = (Math.random() - 0.5) * 0.03;
+      }
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX + Math.sin(this.angle) * 0.5;
+        this.angle += this.spin;
+        if (this.y > canvas.height + 20) {
+          this.reset();
+          this.y = -10;
+        }
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle);
+        ctx.globalAlpha = this.opacity;
+
+        if (this.isPetal) {
+          ctx.fillStyle = '#ffb7c5';
+          ctx.beginPath();
+          ctx.ellipse(0, 0, this.size * 1.6, this.size, 0, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = '#ffeaa7';
+          ctx.beginPath();
+          ctx.arc(0, 0, this.size * 0.6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 35; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    function spawnFloatingHearts() {
+      for (let i = 0; i < 15; i++) {
+        const p = new Particle();
+        p.y = canvas.height * 0.6;
+        p.x = canvas.width * 0.5 + (Math.random() - 0.5) * 150;
+        p.speedY = -(Math.random() * 2 + 1);
+        particles.push(p);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initDailyContent();
+    });
+  </script>
+</body>
+</html>
